@@ -41,6 +41,9 @@
 #include <pthread.h>
 #include <malloc.h>
 
+#include <fcntl.h>
+#include <sys/mman.h>
+
 #if ON_WINDOWS
 #include <windows.h>
 #endif
@@ -668,6 +671,8 @@ void testfunc(const TestFunction* func)
         gopt_nthreads_max = g_physical_cpus + 2;
 
     bool exp_have_physical = false;
+    
+    int corelist[8] = {0,4,8,12,16,20,24,28};
 
     while (1)
     {
@@ -682,6 +687,16 @@ void testfunc(const TestFunction* func)
         pthread_create(&thr[0], NULL, thread_master, new int(0));
         for (int p = 1; p < nthreads; ++p)
             pthread_create(&thr[p], NULL, thread_worker, new int(p));
+        
+        // Set core affinity
+        for(int p = 0; p < nthreads; ++p) {
+            cpu_set_t cpuset;
+            CPU_ZERO(&cpuset);
+            CPU_SET(corelist[p], &cpuset);
+            pthread_setaffinity_np(thr[p], sizeof(cpu_set_t), &cpuset);
+        }
+        
+        std::cout << "Set core affinities" << std::endl;
 
         for (int p = 0; p < nthreads; ++p)
             pthread_join(thr[p], NULL);
