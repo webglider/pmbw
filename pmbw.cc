@@ -912,7 +912,7 @@ int main(int argc, char* argv[])
 
 #if HAVE_POSIX_MEMALIGN
 
-    if (posix_memalign((void**)&g_memarea, 32, g_memsize) != 0) {
+    if (posix_memalign((void**)&g_memarea, 64, g_memsize) != 0) {
         ERR("Error allocating memory.");
         return -1;
     }
