@@ -672,7 +672,7 @@ void testfunc(const TestFunction* func)
 
     bool exp_have_physical = false;
     
-    int corelist[8] = {0,4,8,12,16,20,24,28};
+    int corelist[16] = {0,4,8,12,16,20,24,28,32,36,40,44,48,52,56,60};
 
     while (1)
     {
