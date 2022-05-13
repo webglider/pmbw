@@ -487,7 +487,7 @@ void* thread_master(void* cookie)
     delete (int*)cookie;
 
     // initial repeat factor is just an approximate B/s bandwidth
-    uint64_t factor = 10LL*1024LL*1024LL*1024LL;
+    uint64_t factor = 100LL*1024LL*1024LL*1024LL;
 
     for (const uint64_t* areasize = areasize_list; *areasize; ++areasize)
     {
