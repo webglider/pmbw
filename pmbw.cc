@@ -920,7 +920,7 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    g_memarea = mmap(NULL, g_memsize, PROT_READ|PROT_WRITE, MAP_SHARED, configfd, 0);
+    g_memarea = (char *) mmap(NULL, g_memsize, PROT_READ|PROT_WRITE, MAP_SHARED, configfd, 0);
     if (g_memarea == MAP_FAILED) {
         ERR("barmap mmap failed");
         return -1;
