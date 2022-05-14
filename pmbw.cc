@@ -48,6 +48,8 @@
 #include <windows.h>
 #endif
 
+#define MMIO_MEM 1
+
 // -----------------------------------------------------------------------------
 // --- Global Settings and Variables
 
@@ -487,7 +489,7 @@ void* thread_master(void* cookie)
     delete (int*)cookie;
 
     // initial repeat factor is just an approximate B/s bandwidth
-    uint64_t factor = 100LL*1024LL*1024LL*1024LL;
+    uint64_t factor = 1LL*1024LL*1024LL*1024LL;
 
     for (const uint64_t* areasize = areasize_list; *areasize; ++areasize)
     {
@@ -910,7 +912,21 @@ int main(int argc, char* argv[])
 
     // allocate memory area
 
-#if HAVE_POSIX_MEMALIGN
+#if MMIO_MEM
+    int configfd;
+    configfd = open("/sys/kernel/debug/barmap", O_RDWR);
+    if(configfd < 0) {
+        ERR("barmap file open failed");
+        return -1;
+    }
+
+    g_memarea = mmap(NULL, g_memsize, PROT_READ|PROT_WRITE, MAP_SHARED, configfd, 0);
+    if (g_memarea == MAP_FAILED) {
+        ERR("barmap mmap failed");
+        return -1;
+    }
+    std::cout << "BAR space mmaped successfully" << std::endl;
+#elif HAVE_POSIX_MEMALIGN
 
     if (posix_memalign((void**)&g_memarea, 64, g_memsize) != 0) {
         ERR("Error allocating memory.");
