@@ -984,3 +984,41 @@ void ScanRead512PtrUnrollLoop(char* memarea, size_t size, size_t repeats)
 }
 
 REGISTER_CPUFEAT(ScanRead512PtrUnrollLoop, "avx", 64, 64, 16);
+
+
+// 512-bit reader in an unrolled loop (Assembler version)
+void ScanNtRead512PtrUnrollLoop(char* memarea, size_t size, size_t repeats)
+{
+    asm volatile(
+        "1: \n" // start of repeat loop
+        "mov    %[memarea], %%rax \n"   // rax = reset loop iterator
+        "2: \n" // start of read loop
+        "vmovntdqa 0*64(%%rax), %%zmm0 \n"
+        "vmovdntqa 1*64(%%rax), %%zmm0 \n"
+        "vmovdntqa 2*64(%%rax), %%zmm0 \n"
+        "vmovdntqa 3*64(%%rax), %%zmm0 \n"
+        "vmovdntqa 4*64(%%rax), %%zmm0 \n"
+        "vmovdntqa 5*64(%%rax), %%zmm0 \n"
+        "vmovdntqa 6*64(%%rax), %%zmm0 \n"
+        "vmovdntqa 7*64(%%rax), %%zmm0 \n"
+        "vmovdntqa 8*64(%%rax), %%zmm0 \n"
+        "vmovdntqa 9*64(%%rax), %%zmm0 \n"
+        "vmovdntqa 10*64(%%rax), %%zmm0 \n"
+        "vmovdntqa 11*64(%%rax), %%zmm0 \n"
+        "vmovdntqa 12*64(%%rax), %%zmm0 \n"
+        "vmovdntqa 13*64(%%rax), %%zmm0 \n"
+        "vmovdntqa 14*64(%%rax), %%zmm0 \n"
+        "vmovdntqa 15*64(%%rax), %%zmm0 \n"
+        "add    $16*64, %%rax \n"
+        // test read loop condition
+        "cmp    %[end], %%rax \n"       // compare to end iterator
+        "jb     2b \n"
+        // test repeat loop condition
+        "dec    %[repeats] \n"          // until repeats = 0
+        "jnz    1b \n"
+        : [repeats] "+r" (repeats)
+        : [memarea] "r" (memarea), [end] "r" (memarea+size)
+        : "rax", "xmm0", "cc", "memory");
+}
+
+REGISTER_CPUFEAT(ScanNtRead512PtrUnrollLoop, "avx", 64, 64, 16);

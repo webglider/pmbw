@@ -674,7 +674,8 @@ void testfunc(const TestFunction* func)
 
     bool exp_have_physical = false;
     
-    int corelist[16] = {0,4,8,12,16,20,24,28,32,36,40,44,48,52,56,60};
+    // int corelist[16] = {0,4,8,12,16,20,24,28,32,36,40,44,48,52,56,60};
+    int corelist[32] = {16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63};
 
     while (1)
     {
@@ -962,8 +963,12 @@ int main(int argc, char* argv[])
 
     // cleanup
 
+#if MMIO_MEM
+    // Do nothing
+#else
     free(g_memarea);
-
+#endif
+    
     for (size_t i = 0; i < g_testlist.size(); ++i)
         delete g_testlist[i];
 
