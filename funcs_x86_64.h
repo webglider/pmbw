@@ -1065,41 +1065,41 @@ void ScanNtRead512PtrUnrollLoop(char* memarea, size_t size, size_t repeats)
 REGISTER_CPUFEAT(ScanNtRead512PtrUnrollLoop, "avx", 64, 64, 16);
 
 
-void ScanReadWrite512PtrUnrollLoop(char* memarea, size_t size, size_t repeats)
-{
-    asm volatile(
-        "1: \n" // start of repeat loop
-        "mov    %[memarea], %%rax \n"   // rax = reset loop iterator
-        "2: \n" // start of read loop
-        "vmovdqa64 0*64(%%rax), %%zmm0 \n"
-        "inc %%zmm0 \n"
-        "vmovdqa64 %%zmm0, 0*64(%%rax) \n"
-        "vmovdqa64 0*64(%%rax), %%zmm0 \n"
-        "vmovdqa64 1*64(%%rax), %%zmm0 \n"
-        "vmovdqa64 2*64(%%rax), %%zmm0 \n"
-        "vmovdqa64 3*64(%%rax), %%zmm0 \n"
-        "vmovdqa64 4*64(%%rax), %%zmm0 \n"
-        "vmovdqa64 5*64(%%rax), %%zmm0 \n"
-        "vmovdqa64 6*64(%%rax), %%zmm0 \n"
-        "vmovdqa64 7*64(%%rax), %%zmm0 \n"
-        "vmovdqa64 8*64(%%rax), %%zmm0 \n"
-        "vmovdqa64 9*64(%%rax), %%zmm0 \n"
-        "vmovdqa64 10*64(%%rax), %%zmm0 \n"
-        "vmovdqa64 11*64(%%rax), %%zmm0 \n"
-        "vmovdqa64 12*64(%%rax), %%zmm0 \n"
-        "vmovdqa64 13*64(%%rax), %%zmm0 \n"
-        "vmovdqa64 14*64(%%rax), %%zmm0 \n"
-        "vmovdqa64 15*64(%%rax), %%zmm0 \n"
-        "add    $16*64, %%rax \n"
-        // test read loop condition
-        "cmp    %[end], %%rax \n"       // compare to end iterator
-        "jb     2b \n"
-        // test repeat loop condition
-        "dec    %[repeats] \n"          // until repeats = 0
-        "jnz    1b \n"
-        : [repeats] "+r" (repeats)
-        : [memarea] "r" (memarea), [end] "r" (memarea+size)
-        : "rax", "xmm0", "cc", "memory");
-}
+// void ScanReadWrite512PtrUnrollLoop(char* memarea, size_t size, size_t repeats)
+// {
+//     asm volatile(
+//         "1: \n" // start of repeat loop
+//         "mov    %[memarea], %%rax \n"   // rax = reset loop iterator
+//         "2: \n" // start of read loop
+//         "vmovdqa64 0*64(%%rax), %%zmm0 \n"
+//         "inc %%zmm0 \n"
+//         "vmovdqa64 %%zmm0, 0*64(%%rax) \n"
+//         "vmovdqa64 0*64(%%rax), %%zmm0 \n"
+//         "vmovdqa64 1*64(%%rax), %%zmm0 \n"
+//         "vmovdqa64 2*64(%%rax), %%zmm0 \n"
+//         "vmovdqa64 3*64(%%rax), %%zmm0 \n"
+//         "vmovdqa64 4*64(%%rax), %%zmm0 \n"
+//         "vmovdqa64 5*64(%%rax), %%zmm0 \n"
+//         "vmovdqa64 6*64(%%rax), %%zmm0 \n"
+//         "vmovdqa64 7*64(%%rax), %%zmm0 \n"
+//         "vmovdqa64 8*64(%%rax), %%zmm0 \n"
+//         "vmovdqa64 9*64(%%rax), %%zmm0 \n"
+//         "vmovdqa64 10*64(%%rax), %%zmm0 \n"
+//         "vmovdqa64 11*64(%%rax), %%zmm0 \n"
+//         "vmovdqa64 12*64(%%rax), %%zmm0 \n"
+//         "vmovdqa64 13*64(%%rax), %%zmm0 \n"
+//         "vmovdqa64 14*64(%%rax), %%zmm0 \n"
+//         "vmovdqa64 15*64(%%rax), %%zmm0 \n"
+//         "add    $16*64, %%rax \n"
+//         // test read loop condition
+//         "cmp    %[end], %%rax \n"       // compare to end iterator
+//         "jb     2b \n"
+//         // test repeat loop condition
+//         "dec    %[repeats] \n"          // until repeats = 0
+//         "jnz    1b \n"
+//         : [repeats] "+r" (repeats)
+//         : [memarea] "r" (memarea), [end] "r" (memarea+size)
+//         : "rax", "xmm0", "cc", "memory");
+// }
 
-REGISTER_CPUFEAT(ScanReadWrite512PtrUnrollLoop, "avx", 64, 64, 16);
+// REGISTER_CPUFEAT(ScanReadWrite512PtrUnrollLoop, "avx", 64, 64, 16);
